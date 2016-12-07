@@ -103,7 +103,9 @@ def train_neural_network(x):
 		initialize the variables we created. Note that this defines
 		the operation but does not run it yet:
 		'''	
-		sess.run(tf.initialize_all_variables())
+		#sess.run(tf.initialize_all_variables())
+		#Use tf.global_variables_initializer instead
+		sess.run(tf.global_variables_initializer())
 
 		for epoch in range(hm_epochs):
 			# To measure loss, failure for each epoch
