@@ -16,6 +16,6 @@ with tf.Session() as sess:
 	
 
 writer = tf.train.SummaryWriter('./my_graph', sess.graph)
-writer.close(); 
+writer.close()
 
 
