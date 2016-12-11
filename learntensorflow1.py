@@ -13,5 +13,9 @@ e1 = tf.add(e,b, name="sum_e1")
 with tf.Session() as sess:
 	out = sess.run(e1)
 	print(out)
+	
+
+writer = tf.train.SummaryWriter('./my_graph', sess.graph)
+writer.close(); 
 
 
