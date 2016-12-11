@@ -9,7 +9,6 @@ compare output to intended output > cost or loss function
 > minimize cost (AdamOptimizer ... SGD)
 
 feed forward + backprop = epoch
-
 '''
 
 import tensorflow as tf
@@ -41,8 +40,7 @@ n_classes = 10
 batch_size = 100
 
 # height x width: 784 = 28x28
-picsize = 28*28
-x = tf.placeholder('float', [None, picsize])
+x = tf.placeholder('float', [None, 784])
 y = tf.placeholder('float')
 
 
@@ -50,7 +48,7 @@ y = tf.placeholder('float')
 def neural_network_model(data):
 
 	# (inputdata * weights) + biases  
-	hidden_1_layer = {'weights':tf.Variable(tf.random_normal([picsize, n_nodes_hl1]))
+	hidden_1_layer = {'weights':tf.Variable(tf.random_normal([784, n_nodes_hl1]))
 	               ,'biases':tf.Variable(tf.random_normal([n_nodes_hl1]))}
 
 	hidden_2_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl1, n_nodes_hl2]))
@@ -63,6 +61,7 @@ def neural_network_model(data):
 	               ,'biases':tf.Variable(tf.random_normal([n_classes]))}	                               
  
 	# (input_data * weights) + biases
+
 	l1 = tf.add(tf.matmul(data, hidden_1_layer['weights']) 
 		,hidden_1_layer['biases'])
 	l1 = tf.nn.relu(l1)
@@ -103,9 +102,7 @@ def train_neural_network(x):
 		initialize the variables we created. Note that this defines
 		the operation but does not run it yet:
 		'''	
-		#sess.run(tf.initialize_all_variables())
-		#Use tf.global_variables_initializer instead. tf.initialize_all_variables() has been obsolete.
-		sess.run(tf.global_variables_initializer())
+		sess.run(tf.initialize_all_variables())
 
 		for epoch in range(hm_epochs):
 			# To measure loss, failure for each epoch
@@ -115,11 +112,10 @@ def train_neural_network(x):
 				# It is training dataset in a size of batch size
 				epoch_x, epoch_y = mnist.train.next_batch(batch_size)
 				_, c = sess.run([optimizer, cost], feed_dict = {x: epoch_x, y: epoch_y})
+				# Add up loss/failure.
 				epoch_loss += c
 			print('Epoch', epoch, 'completed out of', hm_epochs,'loss:', epoch_loss)
 
-        # pred_class = tf.argmax(prediction,1)
-        # true_class = tf.argmax(y, 1)
 		correct = tf.equal(tf.argmax(prediction,1), tf.argmax(y,1))
 		accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
 		print('Accuracy:', accuracy.eval({x:mnist.test.images, y:mnist.test.labels}))

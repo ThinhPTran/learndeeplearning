@@ -17,18 +17,7 @@ with tf.Session() as sess:
 
 print(output)
 
-'''
-input > weights > hidden layer 1 (activation function)
-> weights > hidden layer 2 (activation function) >
-weights > output layer 
 
-compare output to intended output > cost or loss function 
-(cross entropy) optimization function (optimizer) 
-> minimize cost (AdamOptimizer ... SGD)
-
-feed forward + backprop = epoch
-
-'''
 
 
 
