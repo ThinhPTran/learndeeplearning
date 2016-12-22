@@ -52,6 +52,9 @@ with tf.Session() as sess:
 		# for debugging  and learning purposes, see how the loss gets decremented through train steps
 		if step % 100 == 0:
 			print "loss: ", sess.run([total_loss])
+			print W.eval()
+			print b.eval()
+
 
 	evaluate(sess, X, Y)
 
