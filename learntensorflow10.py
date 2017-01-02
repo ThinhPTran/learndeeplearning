@@ -28,8 +28,8 @@ def train(total_loss):
 
 def evaluate(sess, X, Y):
 	# evaluate the resulting trained model
-	print sess.run(inference([[80., 25.]])) 
-	print sess.run(inference([[65., 25.]]))
+	print sess.run(inference([[80., 25.]])) # 303
+	print sess.run(inference([[65., 25.]])) # 256
 
 # Launch the graph in a session, setup boilerplate
 with tf.Session() as sess:
@@ -43,6 +43,8 @@ with tf.Session() as sess:
 
 	coord = tf.train.Coordinator()
 	threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+
+	writer = tf.train.SummaryWriter('./testgraph', sess.graph)
 
 	# actual training loop 
 	training_steps = 10000
