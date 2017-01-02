@@ -41,8 +41,8 @@ with tf.Session() as sess:
 	total_loss = loss(X, Y)
 	train_op = train(total_loss)
 
-	coord = tf.train.Coordinator()
-	threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+	# coord = tf.train.Coordinator()
+	# threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
 	writer = tf.train.SummaryWriter('./testgraph', sess.graph)
 
@@ -60,8 +60,8 @@ with tf.Session() as sess:
 
 	evaluate(sess, X, Y)
 
-	coord.request_stop()
-	coord.join(threads)
+	# coord.request_stop()
+	# coord.join(threads)
 	sess.close(); 
 
 
