@@ -41,7 +41,7 @@ def read_csv(batch_size, file_name, record_defaults):
 
 
 def inputs():
-    sepal_length, sepal_width, petal_length, petal_width, label = read_csv(100, "irisdata.csv", [[0.0], [0.0], [0.0], [0.0], [""]])
+    sepal_length, sepal_width, petal_length, petal_width, label = read_csv(120, "irisdata.csv", [[0.0], [0.0], [0.0], [0.0], [""]])
 
     # convert class names to a 0 based class index
     label_number = tf.to_int64(tf.argmax(tf.to_int64(tf.pack([
@@ -49,11 +49,22 @@ def inputs():
         tf.equal(label, ["Iris-versicolor"]),
         tf.equal(label, ["Iris-virginica"])])), 0))
 
-    # print("label_number: %" , label_number)
+    print("(tf.pack([]): ", tf.argmax(tf.to_int64(tf.pack([
+        tf.equal(label, ["Iris-setosa"]),
+        tf.equal(label, ["Iris-versicolor"]),
+        tf.equal(label, ["Iris-virginica"])])),0)) 
+
+    print("label: ", label)
+
+    print("label_number: ", label_number)
+    # print("label_number_val: %", label_number.eval())
 
     # Finally we pack all the features in a single matrix;
     # We then transpose to have a matrix with one example per row and one feature per column.
     features = tf.transpose(tf.pack([sepal_length, sepal_width, petal_length, petal_width]))
+
+    print("features without transposing: ", tf.pack([sepal_length, sepal_width, petal_length, petal_width]))
+    print("features: ", features)
 
     return features, label_number
 
@@ -72,7 +83,7 @@ def evaluate(sess, X, Y):
 
     # print("Yvalue: ", Y.eval())
 
-    predicted = tf.arg_max(inference(X), 1)
+    predicted = tf.argmax(inference(X), 1)
 
     # print ("predicted: ", predicted)
 
@@ -84,6 +95,9 @@ with tf.Session() as sess:
     tf.global_variables_initializer().run()
 
     X, Y = inputs()
+
+    print("X: %", X)
+    print("Y: %", Y)
 
     total_loss = loss(X, Y)
     train_op = train(total_loss)
