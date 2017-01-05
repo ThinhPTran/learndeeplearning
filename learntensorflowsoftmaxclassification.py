@@ -2,8 +2,8 @@ import tensorflow as tf
 import os
 
 # same params and variables initialization as log reg.
-W = tf.Variable(tf.zeros([5, 1]), name="weights")
-b = tf.Variable(0., name="bias")
+W = tf.Variable(tf.zeros([4, 3]), name="weights")
+b = tf.Variable(tf.zeros([3]), name="bias")
 
 
 # former inference is now used for combining inputs
@@ -13,11 +13,11 @@ def combine_inputs(X):
 
 # new inferred value is the sigmoid applied to the former
 def inference(X):
-    return tf.sigmoid(combine_inputs(X))
+    return tf.nn.softmax(combine_inputs(X))
 
 
 def loss(X, Y):
-    return tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(combine_inputs(X), Y))
+    return tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(combine_inputs(X), Y))
 
 
 def read_csv(batch_size, file_name, record_defaults):
@@ -31,7 +31,7 @@ def read_csv(batch_size, file_name, record_defaults):
     # sets the data type for each column
     decoded = tf.decode_csv(value, record_defaults=record_defaults)
 
-    print decoded; 
+    # print decoded; 
 
     # batch actually reads the file and loads "batch_size" rows in a single tensor
     return tf.train.shuffle_batch(decoded,
@@ -41,22 +41,21 @@ def read_csv(batch_size, file_name, record_defaults):
 
 
 def inputs():
-    passenger_id, survived, pclass, name, sex, age, sibsp, parch, ticket, fare, cabin, embarked = \
-        read_csv(100, "train.csv", [[0.0], [0.0], [0], [""], [""], [0.0], [0.0], [0.0], [""], [0.0], [""], [""]])
+    sepal_length, sepal_width, petal_length, petal_width, label = read_csv(100, "irisdata.csv", [[0.0], [0.0], [0.0], [0.0], [""]])
 
-    # convert categorical data
-    is_first_class = tf.to_float(tf.equal(pclass, [1]))
-    is_second_class = tf.to_float(tf.equal(pclass, [2]))
-    is_third_class = tf.to_float(tf.equal(pclass, [3]))
+    # convert class names to a 0 based class index
+    label_number = tf.to_int64(tf.argmax(tf.to_int64(tf.pack([
+        tf.equal(label, ["Iris-setosa"]),
+        tf.equal(label, ["Iris-versicolor"]),
+        tf.equal(label, ["Iris-virginica"])])), 0))
 
-    gender = tf.to_float(tf.equal(sex, ["female"]))
+    # print("label_number: %" , label_number)
 
     # Finally we pack all the features in a single matrix;
     # We then transpose to have a matrix with one example per row and one feature per column.
-    features = tf.transpose(tf.pack([is_first_class, is_second_class, is_third_class, gender, age]))
-    survived = tf.reshape(survived, [100, 1])
+    features = tf.transpose(tf.pack([sepal_length, sepal_width, petal_length, petal_width]))
 
-    return features, survived
+    return features, label_number
 
 
 def train(total_loss):
@@ -66,7 +65,16 @@ def train(total_loss):
 
 def evaluate(sess, X, Y):
 
-    predicted = tf.cast(inference(X) > 0.5, tf.float32)
+    # print tf.arg_max(inference(X),1).eval()
+
+    # print("X: ", X)
+    # print("Y: ", Y)
+
+    # print("Yvalue: ", Y.eval())
+
+    predicted = tf.arg_max(inference(X), 1)
+
+    # print ("predicted: ", predicted)
 
     print sess.run(tf.reduce_mean(tf.cast(tf.equal(predicted, Y), tf.float32)))
 
@@ -84,7 +92,7 @@ with tf.Session() as sess:
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
     # actual training loop
-    training_steps = 3000
+    training_steps = 1000
     for step in range(training_steps):
         sess.run([train_op])
         # for debugging and learning purposes, see how the loss gets decremented thru training steps
@@ -94,7 +102,7 @@ with tf.Session() as sess:
     evaluate(sess, X, Y)
 
     import time
-    time.sleep(5)
+    time.sleep(1)
 
     coord.request_stop()
     coord.join(threads)

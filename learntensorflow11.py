@@ -31,8 +31,6 @@ def read_csv(batch_size, file_name, record_defaults):
     # sets the data type for each column
     decoded = tf.decode_csv(value, record_defaults=record_defaults)
 
-    print decoded; 
-
     # batch actually reads the file and loads "batch_size" rows in a single tensor
     return tf.train.shuffle_batch(decoded,
                                   batch_size=batch_size,
@@ -73,7 +71,7 @@ def evaluate(sess, X, Y):
 # Launch the graph in a session, setup boilerplate
 with tf.Session() as sess:
 
-    tf.global_variables_initializer().run()
+    tf.initialize_all_variables().run()
 
     X, Y = inputs()
 
@@ -84,7 +82,7 @@ with tf.Session() as sess:
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
     # actual training loop
-    training_steps = 3000
+    training_steps = 10000
     for step in range(training_steps):
         sess.run([train_op])
         # for debugging and learning purposes, see how the loss gets decremented thru training steps
@@ -98,7 +96,7 @@ with tf.Session() as sess:
 
     coord.request_stop()
     coord.join(threads)
-    sess.close()
+sess.close()
 
 
 
