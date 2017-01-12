@@ -78,6 +78,8 @@ def evaluate(sess, X, Y):
 
     # print tf.arg_max(inference(X),1).eval()
 
+    print ("inference(X): ", inference(X))
+
     predicted = tf.argmax(inference(X), 1)
 
     # print ("predicted: ", predicted)
