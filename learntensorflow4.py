@@ -5,10 +5,12 @@ a = tf.add(2, 5)
 b = tf.mul(a, 3)
 
 # Start up a "Session" using the default graph
-sess = tf.Session()
+with tf.Session() as sess: 
 
-# Define a dictionary that says to replace the 
-# default value of a with 15
-replace_dict = {a: 15}
+	# Define a dictionary that says to replace the 
+	# default value of a with 15
+	replace_dict = {a: 15}
 
-print(sess.run(b, feed_dict=replace_dict))
+	print(sess.run(b, feed_dict=replace_dict))
+
+	sess.close()
