@@ -18,6 +18,7 @@ with tf.Session() as sess:
 	print(sess.run(d))
 
 	writer = tf.summary.FileWriter("./my_graph1", sess.graph)
+	writer.close()
 
 	# remember to close session. It is a good practice
 	sess.close()
