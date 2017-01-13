@@ -10,5 +10,5 @@ with tf.name_scope("Scope_B"):
 
 e = tf.add(b, d, name="output")
 
-writer = tf.train.SummaryWriter('./name_scope_1', graph=tf.get_default_graph())
+writer = tf.summary.FileWriter('./name_scope_1', graph=tf.get_default_graph())
 writer.close()
