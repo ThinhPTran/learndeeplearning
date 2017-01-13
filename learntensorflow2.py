@@ -17,3 +17,8 @@ d = tf.add(b,c, name="add_d")
 with tf.Session() as sess:
 	print(sess.run(d))
 
+	writer = tf.summary.FileWriter("./my_graph1", sess.graph)
+
+	# remember to close session. It is a good practice
+	sess.close()
+
