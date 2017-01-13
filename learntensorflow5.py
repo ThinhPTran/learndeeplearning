@@ -36,6 +36,12 @@ with tf.Session() as sess:
 	# of 'input_vector' into 'a'
 	print(sess.run(d, feed_dict=input_dict))
 
+	writer = tf.summary.FileWriter("./my_graph4", sess.graph)
+	writer.close()
+
+	sess.close()
+
+
 
 
 
