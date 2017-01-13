@@ -13,4 +13,7 @@ with tf.Session() as sess:
 
 	print(sess.run(b, feed_dict=replace_dict))
 
+	writer = tf.summary.FileWriter("./my_graph3", sess.graph)
+	writer.close()
+
 	sess.close()
