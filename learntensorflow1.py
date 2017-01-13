@@ -15,7 +15,7 @@ with tf.Session() as sess:
 	print(out)
 	
 
-writer = tf.train.SummaryWriter('./my_graph', sess.graph)
+writer = tf.summary.FileWriter('./my_graph', sess.graph)
 writer.close()
 
 
