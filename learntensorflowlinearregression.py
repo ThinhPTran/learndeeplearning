@@ -1,8 +1,15 @@
 import tensorflow as tf 
 
+
+
 # initialize variables/model parameters
 W = tf.Variable(tf.zeros([2, 1]), name="weights")
 b = tf.Variable(0., name="bias")
+
+global_step = tf.Variable(0, dtype=tf.int32, trainable=False, name="global_step")
+
+# Increments the above 'global_step' variable, should be run whenever the graph is run
+increment_step = global_step.assign_add(1)
 
 # define the training loop operations
 def inference(X):
@@ -31,21 +38,26 @@ def evaluate(sess, X, Y):
 	print sess.run(inference([[80., 25.]])) # 303
 	print sess.run(inference([[65., 25.]])) # 256
 
+X, Y = inputs()
+total_loss = loss(X, Y)
+train_op = train(total_loss)
+
 tf.summary.scalar(b'bias', b)
+tf.summary.scalar(b'total_loss', total_loss)
 
 init = tf.global_variables_initializer()
 merged_summaries = tf.summary.merge_all()
+
+def rungraph(sess, writer, step):
+	_, summary = sess.run([train_op, merged_summaries])
+	writer.add_summary(summary, global_step=step)
+
 
 # Launch the graph in a session, setup boilerplate
 with tf.Session() as sess:
 
 	# tf.initialize_all_variables().run()
 	sess.run(init)
-
-	X, Y = inputs()
-
-	total_loss = loss(X, Y)
-	train_op = train(total_loss)
 
 	# coord = tf.train.Coordinator()
 	# threads = tf.train.start_queue_runners(sess=sess, coord=coord)
@@ -55,8 +67,7 @@ with tf.Session() as sess:
 	# actual training loop 
 	training_steps = 1000
 	for step in range(training_steps):
-		_, summary = sess.run([train_op, merged_summaries])
-		writer.add_summary(summary, global_step=step)
+		rungraph(sess, writer, step)
 
 		# for debugging  and learning purposes, see how the loss gets decremented through train steps
 		if step % 100 == 0:
