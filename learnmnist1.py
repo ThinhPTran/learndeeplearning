@@ -43,7 +43,7 @@ b = tf.Variable(tf.zeros([10]))
 # flatten the images into a single line of pixels
 # -1 in the shape definition means "The only possible dimension will
 # preserve the number of elements"
-XX = tf.reshape(X, [-1, 28, 28, 1])
+XX = tf.reshape(X, [-1, 28, 28, 1])my_var_times_two44444
 
 # The model
 Y = tf.nn.softmax(tf.matmul(X, W)+b)

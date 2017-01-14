@@ -43,20 +43,20 @@ with graph.as_default():
 		avg = tf.div(update_total, tf.cast(increment_step, tf.float32), name="average")
 
 		# Creates summaries for output node
-		tf.scalar_summary(b'Output', output, name="output_summary")
-		tf.scalar_summary(b'Sum of outputs over time', update_total, name="total_summary")
-		tf.scalar_summary(b'Average of outputs over time', avg, name="average_summary")
+		tf.summary.scalar(b'Output', output)
+		tf.summary.scalar(b'Sum of outputs over time', update_total)
+		tf.summary.scalar(b'Average of outputs over time', avg)
 
 	with tf.name_scope("global_ops"):
 		# Initialization Op
-		init = tf.initialize_all_variables()
+		init = tf.global_variables_initializer()
 
 		# Merge all summaries into one Operation
-		merged_summaries = tf.merge_all_summaries()
+		merged_summaries = tf.summary.merge_all()
 
 
 sess = tf.Session(graph=graph)
-writer = tf.train.SummaryWriter('./improved_graph', graph)
+writer = tf.summary.FileWriter('./improved_graph', graph)
 
 sess.run(init)
 
@@ -86,4 +86,3 @@ writer.close()
 
 # Close the session
 sess.close()
-
