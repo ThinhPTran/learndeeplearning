@@ -31,10 +31,16 @@ def evaluate(sess, X, Y):
 	print sess.run(inference([[80., 25.]])) # 303
 	print sess.run(inference([[65., 25.]])) # 256
 
+tf.summary.scalar(b'bias', b)
+
+init = tf.global_variables_initializer()
+merged_summaries = tf.summary.merge_all()
+
 # Launch the graph in a session, setup boilerplate
 with tf.Session() as sess:
 
-	tf.initialize_all_variables().run()
+	# tf.initialize_all_variables().run()
+	sess.run(init)
 
 	X, Y = inputs()
 
@@ -44,21 +50,26 @@ with tf.Session() as sess:
 	# coord = tf.train.Coordinator()
 	# threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-	writer = tf.train.SummaryWriter('./testgraph', sess.graph)
+	writer = tf.summary.FileWriter('./testgraph', sess.graph)
 
 	# actual training loop 
-	training_steps = 10000
+	training_steps = 1000
 	for step in range(training_steps):
-		sess.run([train_op])
+		_, summary = sess.run([train_op, merged_summaries])
+		writer.add_summary(summary, global_step=step)
 
 		# for debugging  and learning purposes, see how the loss gets decremented through train steps
 		if step % 100 == 0:
-			print "loss: ", sess.run([total_loss])
+			print "loss: ", sess.run(total_loss)
 			print W.eval()
 			print b.eval()
 
 
 	evaluate(sess, X, Y)
+
+
+	writer.flush()
+	writer.close()
 
 	# coord.request_stop()
 	# coord.join(threads)

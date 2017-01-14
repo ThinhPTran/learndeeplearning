@@ -42,6 +42,8 @@ with graph.as_default():
 	with tf.name_scope("summaries"):
 		avg = tf.div(update_total, tf.cast(increment_step, tf.float32), name="average")
 
+		# print("output", output)
+
 		# Creates summaries for output node
 		tf.summary.scalar(b'Output', output)
 		tf.summary.scalar(b'Sum of outputs over time', update_total)
@@ -54,35 +56,32 @@ with graph.as_default():
 		# Merge all summaries into one Operation
 		merged_summaries = tf.summary.merge_all()
 
-
-sess = tf.Session(graph=graph)
-writer = tf.summary.FileWriter('./improved_graph', graph)
-
-sess.run(init)
-
-
-def run_graph(input_tensor):
+def run_graph(sess, writer, input_tensor):
 	feed_dict = {a: input_tensor}
 	_, step, summary = sess.run([output, increment_step, merged_summaries], feed_dict=feed_dict)
-	writer.add_summary(summary, global_step=step)
+	# writer.add_summary(summary, global_step=step)
 
+with tf.Session(graph=graph) as sess: 
 
-run_graph([2,8])
-run_graph([3,1,3,3])
-run_graph([8])
-run_graph([1,2,3])
-run_graph([11,4])
-run_graph([4,1])
-run_graph([7,3,1])
-run_graph([6,3])
-run_graph([8,2])
-run_graph([4,5,6])
+	writer = tf.summary.FileWriter('./improved_graph', graph)
+	sess.run(init)
 
-# Write the summaries to disk
-writer.flush()
+	run_graph(sess, writer, [2,8])
+	run_graph(sess, writer, [3,1,3,3])
+	run_graph(sess, writer, [8])
+	run_graph(sess, writer, [1,2,3])
+	run_graph(sess, writer, [11,4])
+	run_graph(sess, writer, [4,1])
+	run_graph(sess, writer, [7,3,1])
+	run_graph(sess, writer, [6,3])
+	run_graph(sess, writer, [8,2])
+	run_graph(sess, writer, [4,5,6])
 
-# Close the summaryWriter
-writer.close() 
+	# Write the summaries to disk
+	writer.flush()
 
-# Close the session
-sess.close()
+	# Close the summaryWriter
+	writer.close() 
+
+	# Close the session
+	sess.close()
